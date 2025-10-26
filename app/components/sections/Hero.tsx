@@ -1,8 +1,29 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
+
+const sliderImages = [
+  {
+    src: '/images/sliders/slider-construction.png',
+    alt: 'Construction project underway with engineers on site',
+    headline: 'Infrastructure Delivered With Precision',
+    subline: 'Complex builds executed with disciplined project governance and tier-one safety standards.',
+  },
+  {
+    src: '/images/sliders/slider-real-estate.png',
+    alt: 'Modern real estate development with refined architecture',
+    headline: 'Real Estate Crafted For Enduring Value',
+    subline: 'Residential and commercial spaces curated to elevate lifestyle and investment returns.',
+  },
+  {
+    src: '/images/sliders/slider-gas-refill.png',
+    alt: 'Gas refilling plant with technicians at work',
+    headline: 'Energy Systems Engineered For Reliability',
+    subline: 'Gas distribution networks designed for uninterrupted supply and regulatory compliance.',
+  },
+];
 
 export default function Hero() {
   const { scrollY } = useScroll();
@@ -15,6 +36,8 @@ export default function Hero() {
     { value: 0, target: 200, label: 'Clients', suffix: '+' },
     { value: 0, target: 99.8, label: 'Safety', suffix: '%' },
   ]);
+
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   // Animate stats values when component mounts
   useEffect(() => {
@@ -36,6 +59,13 @@ export default function Hero() {
       });
     }, 1500);
     return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % sliderImages.length);
+    }, 6000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -124,40 +154,51 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.4 }}
           style={{ y: floatingY }}
         >
-          <div className="relative mx-auto max-w-lg rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-2xl">
-            <div className="flex items-center justify-between text-sm text-white/60">
-              <span>Active Developments</span>
-              <span className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-green animate-pulse" />
-                On Schedule
-              </span>
-            </div>
-            <div className="mt-8 space-y-6">
-              <div>
-                <p className="text-sm uppercase tracking-wide text-white/50">Current Focus</p>
-                <p className="text-2xl font-semibold mt-2">
-                  Premium residential enclaves & energy infrastructure upgrades.
+          <div className="relative mx-auto max-w-lg overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/5 shadow-2xl">
+            <div className="relative h-[28rem]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={sliderImages[currentSlide].src}
+                  className="absolute inset-0"
+                  initial={{ opacity: 0, scale: 1.02 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.8, ease: 'easeOut' }}
+                >
+                  <Image
+                    src={sliderImages[currentSlide].src}
+                    alt={sliderImages[currentSlide].alt}
+                    fill
+                    priority
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/30" />
+                </motion.div>
+              </AnimatePresence>
+              <div className="relative z-10 flex h-full flex-col justify-end gap-4 p-8">
+                <div className="flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-white/70">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  Sector Specialization
+                </div>
+                <h3 className="text-2xl font-semibold leading-tight md:text-3xl">
+                  {sliderImages[currentSlide].headline}
+                </h3>
+                <p className="text-sm text-white/70 md:text-base">
+                  {sliderImages[currentSlide].subline}
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-white/50">Clients</p>
-                  <p className="mt-2 text-2xl font-semibold">200+</p>
-                  <p className="text-white/50 mt-1 text-xs">Across 10 states</p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-white/50">Projects</p>
-                  <p className="mt-2 text-2xl font-semibold">150</p>
-                  <p className="text-white/50 mt-1 text-xs">Delivered & ongoing</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-primary/10 p-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-lg font-semibold">
-                  A4
-                </div>
-                <p className="text-sm text-white/70">
-                  “We bring understated luxury and pragmatic engineering together in every brief.”
-                </p>
+              <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
+                {sliderImages.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setCurrentSlide(index)}
+                    className={`h-2.5 rounded-full transition-all ${
+                      index === currentSlide ? 'w-6 bg-primary' : 'w-2 bg-white/40 hover:bg-white/60'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
               </div>
             </div>
           </div>

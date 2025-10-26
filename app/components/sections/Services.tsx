@@ -26,8 +26,7 @@ const services: Service[] = [
       'Civil, Mechanical, Electrical Works',
       'Interior Works (HVAC, Plumbing, Painting)',
     ],
-    image:
-      'https://images.pexels.com/photos/276224/pexels-photo-276224.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    image: '/images/services/contruction.png',
   },
   {
     title: 'Real Estate Development',
@@ -42,8 +41,7 @@ const services: Service[] = [
       'Investment Advisory',
       'Leasing & Rental Services',
     ],
-    image:
-      'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    image: '/images/services/real-estate.png',
   },
   {
     title: 'Gas Refilling & Distribution',
@@ -58,8 +56,7 @@ const services: Service[] = [
       'Domestic & Commercial Supply',
       'Industrial Solutions',
     ],
-    image:
-      'https://images.pexels.com/photos/275033/pexels-photo-275033.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    image: '/images/services/gas-refill.png',
   },
 ];
 
