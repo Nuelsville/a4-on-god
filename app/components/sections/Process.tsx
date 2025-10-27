@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { HeartHandshake, Ruler, FileCheck2, Hammer, ShieldCheck, Key } from 'lucide-react';
@@ -73,6 +74,30 @@ const steps: Step[] = [
 
 export default function Process() {
   const { ref, inView } = useInView({ threshold: 0.2, triggerOnce: true });
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => {
+        const next = (prev + 1) % steps.length;
+        const nextCard = container.children[next] as HTMLElement | undefined;
+        if (nextCard) {
+          container.scrollTo({
+            left: nextCard.offsetLeft,
+            behavior: 'smooth',
+          });
+        }
+        return next;
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section id="process" className="py-24 bg-white">
       <div className="container mx-auto px-4">
@@ -89,9 +114,13 @@ export default function Process() {
         </div>
         <div
           ref={ref}
-          className="flex overflow-x-auto space-x-6 snap-x snap-mandatory pb-8"
+          className="relative"
         >
-          {steps.map((step, idx) => (
+          <div
+            ref={scrollRef}
+            className="flex overflow-x-auto space-x-6 snap-x snap-mandatory pb-8 scrollbar-hide"
+          >
+            {steps.map((step, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 30 }}
@@ -99,7 +128,7 @@ export default function Process() {
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               className="min-w-[280px] sm:min-w-[350px] md:min-w-[380px] bg-white rounded-3xl shadow-xl snap-center overflow-hidden border border-gray-100 flex flex-col"
             >
-              <div className="relative h-44">
+              <div className="relative h-56 md:h-64">
                 <Image
                   src={step.image}
                   alt={step.title}
@@ -129,6 +158,7 @@ export default function Process() {
               </div>
             </motion.div>
           ))}
+          </div>
         </div>
       </div>
     </section>
